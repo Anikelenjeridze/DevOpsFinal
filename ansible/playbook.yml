@@ -1,0 +1,33 @@
+---
+- name: Deploy DevOps Project Stack
+  hosts: localhost # or your remote server
+  connection: local # or ssh
+  become: yes # Use sudo
+
+  vars:
+    project_dir: "/opt/devops-final-project"
+    repo_url: "https://github.com/Anikelenjeridze/DevOpsFinal.git"
+
+  tasks:
+    - name: Ensure git and docker are installed
+      apt:
+        name: ["git", "docker.io", "docker-compose"]
+        state: present
+        update_cache: yes
+
+    - name: Clone the project repository
+      git:
+        repo: "{{ repo_url }}"
+        dest: "{{ project_dir }}"
+        force: yes
+
+    - name: Create .env file from template
+      template:
+        src: "{{ project_dir }}/.env.template"
+        dest: "{{ project_dir }}/.env"
+
+    - name: Build and start the services with Docker Compose
+      community.docker.docker_compose:
+        project_src: "{{ project_dir }}"
+        build: yes
+        state: present # same as 'up -d'
