@@ -6,7 +6,7 @@ services:
     container_name: backend-service
     restart: always
     ports:
-      - "5001:5000" # Expose backend on host port 5001
+      - "5001:5000"
     env_file:
       - .env
 
@@ -33,9 +33,10 @@ services:
     container_name: grafana
     restart: always
     ports:
-      - "4000:3000" # Expose Grafana on host port 4000
+      - "4000:3000"
     volumes:
       - ./grafana/provisioning:/etc/grafana/provisioning
+    user: "root" # This line is now correctly indented and part of the grafana service
 
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:v0.45.0
